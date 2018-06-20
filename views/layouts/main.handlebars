@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>SocialCeleb</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://bootswatch.com/4/cyborg/bootstrap.min.css">
+
+    <style media="screen">
+        #fb-btn {
+            margin-top: 20px
+        }
+
+        ;
+        #profile,
+        #logout {
+            display: none
+        }
+
+        ;
+    </style>
+
+
+</head>
+
+<body>
+    <!-- Insert code below directly after the body tag and on every page you want user wants it to load up functionality. -->
+    <!-- Initilize and set up facebook js sdk-->
+    <script>
+        window.fbAsyncInit = function () {
+            FB.init({
+                appId: "244913019595852",
+                autoLogAppEvents: true,
+                xfbml: true,
+                version: 'v3.0'
+            });
+            FB.getLoginStatus(function (response) {
+                statusChangeCallback(response);
+            });
+        };
+
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) { return; }
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+
+        function statusChangeCallback(response) {
+            if (response.status === 'connected') {
+                console.log("Logged in and authenticated");
+                setElements(true);
+                testAPI();
+                // the user is logged in and has authenticated your
+                // app, and response.authResponse supplies
+                // the user's ID, a valid access token, a signed
+                // request, and the time the access token 
+                // and signed request each expire
+                var uid = response.authResponse.userID;
+                var accessToken = response.authResponse.accessToken;
+            } else {
+                (response.status === 'not-authorized')
+                console.log("Not logged in + not authenticated")
+                setElements(false);
+            }
+        }
+
+
+        function checkLoginState() {
+            FB.getLoginStatus(function (response) {
+                statusChangeCallback(response);
+            });
+        }
+
+        function testAPI() {
+            FB.api("/me?fields=first_name,last_name,birthday,location,hometown,friends", function (response) { 
+                if (response && !response.error) {
+                    console.log(response);
+                    buildProfile(response);
+                    //dataAPI(response);
+                }
+            })
+        }
+
+        // function testAPI() {
+            // FB.api("/me?fields=about,fan_count,website", function (response) {
+                // var person = "Nirmal Shah"; 
+                //"/me?fields=first_name,last_name,birthday,friends"
+                // if (response && !response.error) {
+                   //  console.log(response);
+                    //buildProfile(response);
+                    //dataAPI(response);
+                //} else {
+                   // console.log('error', response);
+               // }
+           // })
+       // }
+
+        // function dataAPI(user) {
+           // console.log("inside dataAPI");
+            /* make the API call */
+            //FB.api(
+              //  "/244913019595852/app_insights/api_calls",
+                //{
+                  //  "period": "daily",
+                    //"breakdowns[0]": "client",
+                   // "name": "api_calls"
+                //},
+                //function (response) {
+                  //  console.log("inside callback function",//response)
+                    //if (response && !response.error) {
+                      //  console.log("post impressions data", response);
+                    //};
+               // });
+       // };
+
+
+            // function testAPI() {
+            //  FB.api(
+            //   "{object_id}/insights/{page_engaged_users}",
+            //function (response) {
+            // if (response && !response.error) {
+            /* handle the result */
+            //}
+            //}
+            //);
+            //};
+
+
+            function buildProfile(user) {
+                var userFn = user.first_name;
+                var userLn = user.last_name;
+                var userDay = user.birthday;
+                var userFriends = user.friends.summary.total_count;
+                var userHometown = user.hometown.name;
+                var userLocation = user.location.name;
+
+                let profile = `
+            <h3> User Information </h3>
+            <ul class="list-group">
+                <h3> First Name: ${userFn} </h3>
+                <h3> Last Name: ${userLn} </h3>
+                <h3> Birthday: ${userDay} </h3>
+                <h3> Total Number of Friends: ${userFriends} </h3>
+                <h3> Hometown: ${userHometown} </h3>
+                <h3> Location: ${userLocation} </h3>
+
+                </ul>
+            `
+                console.log("ALL INFO" + user);
+                console.log(userLocation)
+
+                document.getElementById("profile").innerHTML = profile;
+            };
+
+            function setElements(isLoggedIn) {
+                if (isLoggedIn) {
+                    document.getElementById("logout").style.display = "none";
+                    document.getElementById("profile").style.display = "block";
+                    document.getElementById("fb-btn").style.display = "none";
+                    document.getElementById("heading").style.display = "none";
+                } else {
+                    document.getElementById("logout").style.display = "none";
+                    document.getElementById("profile").style.display = "none";
+                    document.getElementById("fb-btn").style.display = "block";
+                    document.getElementById("heading").style.display = "block";
+
+                }
+            }
+
+            function logout() {
+                FB.logout(function (response) {
+                    setElements(false);
+                });
+            };
+
+
+    </script> {{{ body }}}
+
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
